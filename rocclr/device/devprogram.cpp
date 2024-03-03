@@ -42,6 +42,7 @@
 #include <string>
 #include <sstream>
 #include <cstdio>
+#include <regex>
 
 #if defined(ATI_OS_LINUX)
 #include <dlfcn.h>
@@ -289,18 +290,25 @@ static amd_comgr_language_t getCOMGRLanguage(bool isHIP, const amd::option::Opti
   if (isHIP) {
     return AMD_COMGR_LANGUAGE_HIP;
   } else {
-    const char* clStd = amdOptions.oVariables->CLStd;
-    uint clcStd = (clStd[2] - '0') * 100 + (clStd[4] - '0') * 10;
-
-    switch (clcStd) {
-      case 100:
-      case 110:
-      case 120:
-        return AMD_COMGR_LANGUAGE_OPENCL_1_2;
-      case 200:
+    const std::string clStd = amdOptions.oVariables->CLStd;
+    const std::regex clcpp_regex{R"(CLC\+\+(1\.0|[0-9]+)?)"};
+    if (std::smatch matches; std::regex_search(clStd, matches, clcpp_regex))
+    {
+      if (matches[1].str().empty())
+        return AMD_COMGR_LANGUAGE_CXX_FOR_OPENCL_1_0;
+      // C++ for OpenCL 2021 may come here
+    }
+    const std::regex cl_regex{R"(CL([0-9]\.[0-9]))"};
+    if (std::smatch matches; std::regex_search(clStd, matches, cl_regex))
+    {
+      if (matches[1].str().empty())
         return AMD_COMGR_LANGUAGE_OPENCL_2_0;
-      default:
-        break;
+      if (matches[1] == "1.1")
+        return AMD_COMGR_LANGUAGE_OPENCL_1_2;
+      if (matches[1] == "1.2")
+        return AMD_COMGR_LANGUAGE_OPENCL_1_2;
+      if (matches[1] == "2.0")
+        return AMD_COMGR_LANGUAGE_OPENCL_2_0;
     }
   }
 
@@ -466,7 +474,7 @@ bool Program::compileToLLVMBitcode(const amd_comgr_data_set_t compileInputs,
     }
   }
 
-  if (!isHIP()) {
+  if (!isHIP()/* && langver != AMD_COMGR_LANGUAGE_CXX_FOR_OPENCL_1_0*/) {
     if (status == AMD_COMGR_STATUS_SUCCESS) {
       status = amd::Comgr::do_action(AMD_COMGR_ACTION_ADD_PRECOMPILED_HEADERS,
                                      action, input, dataSetPCH);
@@ -683,6 +691,7 @@ bool Program::compileImplLC(const std::string& sourceCode,
   if (!device().settings().enableWgpMode_) {
     driverOptions.push_back("-mcumode");
   }
+  //driverOptions.push_back("--rocm-device-lib-path=/home/mate/Source/Repos/ROCm-Device-Libs/install/ninja-llvm-16-debug/amdgcn/bitcode/");
 
   if (device().settings().lcWavefrontSize64_) {
     driverOptions.push_back("-mwavefrontsize64");

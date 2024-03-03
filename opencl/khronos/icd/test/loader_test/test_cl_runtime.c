@@ -1,14 +1,8 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include <CL/cl.h>
 #include "param_struct.h"
 #include <platform/icd_test_log.h>
 
 extern cl_command_queue command_queue;
-
-static cl_int ret_val;
 
 const struct clRetainCommandQueue_st clRetainCommandQueueData[NUM_ITEMS_clRetainCommandQueue] = {
 	{NULL}
@@ -20,6 +14,9 @@ const struct clGetCommandQueueInfo_st clGetCommandQueueInfoData[NUM_ITEMS_clGetC
 
 int test_clRetainCommandQueue(const struct clRetainCommandQueue_st *data)
 {
+    (void)data;
+    cl_int ret_val;
+
     test_icd_app_log("clRetainCommandQueue(%p)\n", command_queue);
 
     ret_val = clRetainCommandQueue(command_queue);
@@ -32,6 +29,8 @@ int test_clRetainCommandQueue(const struct clRetainCommandQueue_st *data)
 
 int test_clGetCommandQueueInfo(const struct clGetCommandQueueInfo_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clGetCommandQueueInfo(%p, %u, %u, %p, %p)\n",
                      command_queue,
                      data->param_name,

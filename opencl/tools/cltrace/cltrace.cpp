@@ -946,8 +946,8 @@ getKernelExecInfoString(cl_kernel_exec_info param_name)
     switch (param_name) {
     CASE(CL_KERNEL_EXEC_INFO_SVM_FINE_GRAIN_SYSTEM);
     CASE(CL_KERNEL_EXEC_INFO_SVM_PTRS);
-    CASE(CL_KERNEL_EXEC_INFO_NEW_VCOP_AMD);
-    CASE(CL_KERNEL_EXEC_INFO_PFPA_VCOP_AMD);
+    //CASE(CL_KERNEL_EXEC_INFO_NEW_VCOP_AMD);
+    //CASE(CL_KERNEL_EXEC_INFO_PFPA_VCOP_AMD);
     default: return getHexString(param_name);
     }
 }

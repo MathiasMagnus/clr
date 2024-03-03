@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2019 The Khronos Group Inc.
+ * Copyright (c) 2017-2022 The Khronos Group Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ static bool ReadOpenCLKey(DEVINST dnDevNode)
 
     if (CR_SUCCESS != ret)
     {
-        KHR_ICD_TRACE("Failed with ret 0x%x\n", ret);
+        KHR_ICD_TRACE("Failed with ret 0x%"PRIxDW"\n", ret);
         goto out;
     }
     else
@@ -105,14 +105,14 @@ static bool ReadOpenCLKey(DEVINST dnDevNode)
 
         if (ERROR_SUCCESS != result)
         {
-            KHR_ICD_TRACE("Failed to open sub key 0x%x\n", result);
+            KHR_ICD_TRACE("Failed to open sub key 0x%"PRIxDW"\n", result);
             goto out;
         }
 
         cszOclPath = malloc(dwOclPathSize);
         if (NULL == cszOclPath)
         {
-            KHR_ICD_TRACE("Failed to allocate %u bytes for registry value\n", dwOclPathSize);
+            KHR_ICD_TRACE("Failed to allocate %"PRIuDW" bytes for registry value\n", dwOclPathSize);
             goto out;
         }
 
@@ -125,7 +125,7 @@ static bool ReadOpenCLKey(DEVINST dnDevNode)
             &dwOclPathSize);
         if (ERROR_SUCCESS != result)
         {
-            KHR_ICD_TRACE("Failed to open sub key 0x%x\n", result);
+            KHR_ICD_TRACE("Failed to open sub key 0x%"PRIxDW"\n", result);
             goto out;
         }
 
@@ -137,7 +137,7 @@ static bool ReadOpenCLKey(DEVINST dnDevNode)
             }
             else
             {
-                KHR_ICD_TRACE("Unexpected registry entry 0x%x! continuing\n", dwLibraryNameType);
+                KHR_ICD_TRACE("Unexpected registry entry 0x%"PRIxDW"! continuing\n", dwLibraryNameType);
                 goto out;
             }
         }
@@ -155,7 +155,7 @@ out:
         result = RegCloseKey(hkey);
         if (ERROR_SUCCESS != result)
         {
-            KHR_ICD_TRACE("WARNING: failed to close hkey 0x%x\n", result);
+            KHR_ICD_TRACE("WARNING: failed to close hkey 0x%"PRIxDW"\n", result);
         }
     }
 
@@ -176,7 +176,7 @@ static DeviceProbeResult ProbeDevice(DEVINST devnode)
 
     if (CR_SUCCESS != ret)
     {
-        KHR_ICD_TRACE("    WARNING: failed to probe the status of the device 0x%x\n", ret);
+        KHR_ICD_TRACE("    WARNING: failed to probe the status of the device 0x%"PRIxDW"\n", ret);
         return ProbeFailure;
     }
 
@@ -194,7 +194,7 @@ static DeviceProbeResult ProbeDevice(DEVINST devnode)
     if (((ulStatus & DN_HAS_PROBLEM) && ulProblem == CM_PROB_NEED_RESTART) ||
           ulStatus & DN_NEED_RESTART)
     {
-        KHR_ICD_TRACE("    WARNING: device is pending reboot (0x%x), skipping...\n", ulStatus);
+        KHR_ICD_TRACE("    WARNING: device is pending reboot (0x%" PRIxUL "), skipping...\n", ulStatus);
         return PendingReboot;
     }
 
@@ -214,8 +214,12 @@ bool khrIcdOsVendorsEnumerateHKR(void)
     ULONG szBuffer = 0;
 
     OLECHAR display_adapter_guid_str[MAX_GUID_STRING_LEN];
+#if defined(CM_GETIDLIST_FILTER_CLASS) && defined(CM_GETIDLIST_FILTER_PRESENT)
     ULONG ulFlags = CM_GETIDLIST_FILTER_CLASS |
                     CM_GETIDLIST_FILTER_PRESENT;
+#else
+    ULONG ulFlags = 0x300;
+#endif
 
     iret = StringFromGUID2(
         &GUID_DEVCLASS_DISPLAY,
@@ -239,7 +243,7 @@ bool khrIcdOsVendorsEnumerateHKR(void)
 
         if (CR_SUCCESS != ret)
         {
-            KHR_ICD_TRACE("CM_Get_Device_ID_List_size failed with 0x%x\n", ret);
+            KHR_ICD_TRACE("CM_Get_Device_ID_List_size failed with 0x%"PRIxDW"\n", ret);
             break;
         }
 
@@ -251,7 +255,7 @@ bool khrIcdOsVendorsEnumerateHKR(void)
         deviceIdList = malloc(szBuffer * sizeof(wchar_t));
         if (NULL == deviceIdList)
         {
-            KHR_ICD_TRACE("Failed to allocate %u bytes for device ID strings\n", szBuffer);
+            KHR_ICD_TRACE("Failed to allocate %" PRIuUL " bytes for device ID strings\n", szBuffer);
             break;
         }
 
@@ -263,7 +267,7 @@ bool khrIcdOsVendorsEnumerateHKR(void)
 
         if (CR_SUCCESS != ret)
         {
-            KHR_ICD_TRACE("CM_Get_Device_ID_List failed with 0x%x\n", ret);
+            KHR_ICD_TRACE("CM_Get_Device_ID_List failed with 0x%"PRIxDW"\n", ret);
             KHR_SAFE_RELEASE(deviceIdList);
         }
     } while (CR_BUFFER_SMALL == ret);
@@ -275,18 +279,16 @@ bool khrIcdOsVendorsEnumerateHKR(void)
 
     for (PWSTR deviceId = deviceIdList; *deviceId; deviceId += wcslen(deviceId) + 1)
     {
-        DEVPROPTYPE devpropType;
-
         KHR_ICD_WIDE_TRACE(L"Device ID: %ls\n", deviceId);
 
         ret = CM_Locate_DevNodeW(&devinst, deviceId, 0);
         if (CR_SUCCESS == ret)
         {
-            KHR_ICD_TRACE("    devinst: %d\n", devinst);
+            KHR_ICD_TRACE("    devinst: %lu\n", devinst);
         }
         else
         {
-            KHR_ICD_TRACE("CM_Locate_DevNode failed with 0x%x\n", ret);
+            KHR_ICD_TRACE("CM_Locate_DevNode failed with 0x%"PRIxDW"\n", ret);
             continue;
         }
 
@@ -311,7 +313,7 @@ bool khrIcdOsVendorsEnumerateHKR(void)
 
         if (CR_SUCCESS != ret)
         {
-            KHR_ICD_TRACE("    CM_Get_Child returned 0x%x, skipping children...\n", ret);
+            KHR_ICD_TRACE("    CM_Get_Child returned 0x%"PRIxDW", skipping children...\n", ret);
         }
         else
         {
@@ -321,7 +323,7 @@ bool khrIcdOsVendorsEnumerateHKR(void)
                 GUID guid;
                 ULONG szGuid = sizeof(guid);
 
-                KHR_ICD_TRACE("    devchild: %d\n", devchild);
+                KHR_ICD_TRACE("    devchild: %lu\n", devchild);
                 ret = CM_Get_Device_IDW(
                     devchild,
                     deviceInstanceID,
@@ -330,7 +332,7 @@ bool khrIcdOsVendorsEnumerateHKR(void)
 
                 if (CR_SUCCESS != ret)
                 {
-                    KHR_ICD_TRACE("    CM_Get_Device_ID returned 0x%x, skipping device...\n", ret);
+                    KHR_ICD_TRACE("    CM_Get_Device_ID returned 0x%"PRIxDW", skipping device...\n", ret);
                     continue;
                 }
                 else
@@ -338,17 +340,22 @@ bool khrIcdOsVendorsEnumerateHKR(void)
                     KHR_ICD_WIDE_TRACE(L"    deviceInstanceID: %ls\n", deviceInstanceID);
                 }
 
-                ret = CM_Get_DevNode_PropertyW(
+                ret = CM_Get_DevNode_Registry_PropertyW(
                     devchild,
-                    &DEVPKEY_Device_ClassGuid,
-                    &devpropType,
+                    CM_DRP_CLASSGUID,
+                    NULL,
                     (PBYTE)&guid,
                     &szGuid,
                     0);
 
-                if (CR_SUCCESS != ret ||
-                    !IsEqualGUID(&OCL_GUID_DEVCLASS_SOFTWARECOMPONENT, &guid))
+                if (CR_SUCCESS != ret)
                 {
+                    KHR_ICD_TRACE("    CM_Get_DevNode_Registry_PropertyW returned 0x%"PRIxDW", skipping device...\n", ret);
+                    continue;
+                }
+                else if (!IsEqualGUID(&OCL_GUID_DEVCLASS_SOFTWARECOMPONENT, &guid))
+                {
+                    KHR_ICD_TRACE("    GUID does not match, skipping device...\n");
                     continue;
                 }
 

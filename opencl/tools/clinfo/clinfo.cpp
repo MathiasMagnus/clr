@@ -35,10 +35,10 @@
 
 #if defined(HAVE_CL2_HPP)
 #define CL_HPP_ENABLE_EXCEPTIONS
-#define CL_HPP_MINIMUM_OPENCL_VERSION 120
-#define CL_HPP_TARGET_OPENCL_VERSION 200
+#define CL_HPP_MINIMUM_OPENCL_VERSION 220
+#define CL_HPP_TARGET_OPENCL_VERSION 220
 #define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY
-#include "CL/cl2.hpp"
+#include "CL/opencl.hpp"
 #else // !HAVE_CL2_HPP
 #define __CL_ENABLE_EXCEPTIONS
 #define __MAX_DEFAULT_VECTOR_SIZE 50
@@ -167,7 +167,7 @@ main(int argc, char** argv)
                 std::cout << "  Board name:\t\t\t\t\t "
                     << boardName.c_str()
                     << std::endl;
-
+/*
                 cl_device_topology_amd topology;
                 err = device.getInfo(CL_DEVICE_TOPOLOGY_AMD, &topology);
                 if (topology.raw.type == CL_DEVICE_TOPOLOGY_TYPE_PCIE_AMD) {
@@ -177,6 +177,7 @@ main(int argc, char** argv)
                           << ", F#" << (int)topology.pcie.function
                           << " ]" << std::endl;
                 }
+*/
              }
 
             std::cout << "  Max compute units:\t\t\t\t "
@@ -647,12 +648,14 @@ main(int argc, char** argv)
                       << device.getInfo<CL_DEVICE_ERROR_CORRECTION_SUPPORT>()
                       << std::endl;
 #ifdef CL_VERSION_1_1
+/*
             if(vStrVal.compare("1.0") > 0)
             {
                 std::cout << "  Unified memory for Host and Device:\t\t "
                           << device.getInfo<CL_DEVICE_HOST_UNIFIED_MEMORY>()
                           << std::endl;
             }
+*/
 #endif // CL_VERSION_1_1
             std::cout << "  Profiling timer resolution:\t\t\t "
                       << device.getInfo<CL_DEVICE_PROFILING_TIMER_RESOLUTION>()
@@ -706,7 +709,7 @@ main(int argc, char** argv)
 #endif
 
             std::cout << "  Platform ID:\t\t\t\t\t "
-                  << device.getInfo<CL_DEVICE_PLATFORM>()
+                  << device.getInfo<CL_DEVICE_PLATFORM>()()
                       << std::endl;
 
             std::cout << "  Name:\t\t\t\t\t\t "

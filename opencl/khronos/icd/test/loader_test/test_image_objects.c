@@ -1,7 +1,3 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include <stdlib.h>
 
 #include <CL/cl.h>
@@ -13,8 +9,6 @@ extern cl_context  context;
 extern cl_command_queue command_queue;
 extern cl_event event;
 extern cl_mem buffer;
-
-static int ret_val;
 
 const struct clGetSupportedImageFormats_st clGetSupportedImageFormatsData[NUM_ITEMS_clGetSupportedImageFormats] =
 {
@@ -33,7 +27,7 @@ const struct clEnqueueCopyBufferToImage_st clEnqueueCopyBufferToImageData[NUM_IT
 
 const struct clEnqueueMapImage_st clEnqueueMapImageData[NUM_ITEMS_clEnqueueMapImage] =
 {
-    { NULL, NULL, 0, 0x0, NULL, NULL, NULL, NULL,0, NULL, NULL}
+    { NULL, NULL, 0, 0x0, NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL}
 };
 
 const struct clEnqueueReadImage_st clEnqueueReadImageData[NUM_ITEMS_clEnqueueReadImage] =
@@ -63,6 +57,8 @@ const struct clGetImageInfo_st clGetImageInfoData[NUM_ITEMS_clGetImageInfo] =
 
 int test_clGetSupportedImageFormats(const struct clGetSupportedImageFormats_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clGetSupportedImageFormats(%p, %x, %u, %u, %p, %p)\n",
                      context,
                      data->flags,
@@ -86,6 +82,8 @@ int test_clGetSupportedImageFormats(const struct clGetSupportedImageFormats_st *
 
 int test_clEnqueueCopyImageToBuffer(const struct clEnqueueCopyImageToBuffer_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueCopyImageToBuffer(%p, %p, %p, %p, %p, %u, %u, %p, %p)\n",
                      command_queue,
                      image,
@@ -115,6 +113,8 @@ int test_clEnqueueCopyImageToBuffer(const struct clEnqueueCopyImageToBuffer_st *
 
 int test_clEnqueueCopyBufferToImage(const struct clEnqueueCopyBufferToImage_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueCopyBufferToImage(%p, %p, %p, %u, %p, %p, %u, %p, %p)\n",
                      command_queue,
                      buffer,
@@ -182,6 +182,8 @@ int test_clEnqueueMapImage(const struct clEnqueueMapImage_st *data)
 
 int test_clEnqueueReadImage(const struct clEnqueueReadImage_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueReadImage(%p, %p, %u, %p, %p, %u, %u, %p, %u, %p, %p)\n",
                      command_queue,
                      image,
@@ -215,6 +217,8 @@ int test_clEnqueueReadImage(const struct clEnqueueReadImage_st *data)
 
 int test_clEnqueueWriteImage(const struct clEnqueueWriteImage_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueWriteImage(%p, %p, %u, %p, %p, %u, %u, %p, %u, %p, %p)\n",
                      command_queue,
                      image,
@@ -248,6 +252,8 @@ int test_clEnqueueWriteImage(const struct clEnqueueWriteImage_st *data)
 
 int test_clEnqueueFillImage(const struct clEnqueueFillImage_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueFillImage(%p, %p, %p, %p, %p, %u, %p, %p)\n",
                      command_queue,
                      image,
@@ -274,6 +280,8 @@ int test_clEnqueueFillImage(const struct clEnqueueFillImage_st *data)
 }
 int test_clEnqueueCopyImage(const struct clEnqueueCopyImage_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueCopyImage(%p, %p, %p, %p, %p, %p, %u, %p, %p)\n",
                      command_queue,
                      image,
@@ -304,6 +312,8 @@ int test_clEnqueueCopyImage(const struct clEnqueueCopyImage_st *data)
 
 int test_clGetImageInfo(const struct clGetImageInfo_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clGetImageInfo(%p, %u, %u, %p, %p)\n",
                      image,
                      data->param_name,

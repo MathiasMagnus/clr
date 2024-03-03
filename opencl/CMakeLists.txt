@@ -22,7 +22,7 @@ if(NOT ENABLE_ASAN_PACKAGING)
   option(FILE_REORG_BACKWARD_COMPATIBILITY "Enable File Reorganization backward compatibility" ON)
 endif()
 
-set(OPENCL_ICD_LOADER_HEADERS_DIR "${CMAKE_CURRENT_LIST_DIR}/khronos/headers/opencl2.2" CACHE PATH "")
+set(OPENCL_ICD_LOADER_HEADERS_DIR "${CMAKE_CURRENT_LIST_DIR}/khronos/headers" CACHE PATH "")
 if(BUILD_ICD)
   add_subdirectory(khronos/icd)
 else()

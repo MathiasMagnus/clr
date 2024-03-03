@@ -163,6 +163,7 @@ enum OclExtensions {
   ClKhrMipMapImageWrites,
   ClAmdCopyBufferP2P,
   ClAmdAssemblyProgram,
+  ClExtCxxForOpenCL,
 #if defined(_WIN32)
   ClAmdPlanarYuv,
 #endif
@@ -206,6 +207,7 @@ static constexpr const char* OclExtensionsString[] = {"cl_khr_fp64 ",
                                             "cl_khr_mipmap_image_writes ",
                                             "cl_amd_copy_buffer_p2p ",
                                             "cl_amd_assembly_program ",
+                                            "cl_ext_cxx_for_opencl ",
 #if defined(_WIN32)
                                             "cl_amd_planar_yuv",
 #endif

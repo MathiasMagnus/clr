@@ -1,13 +1,8 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include <CL/cl.h>
 #include "param_struct.h"
 #include <platform/icd_test_log.h>
 
 extern cl_sampler  sampler;
-static int ret_val;
 
 const struct clRetainSampler_st clRetainSamplerData[NUM_ITEMS_clRetainSampler]=
 {
@@ -22,6 +17,9 @@ const struct clGetSamplerInfo_st clGetSamplerInfoData[NUM_ITEMS_clGetSamplerInfo
 
 int test_clRetainSampler(const struct clRetainSampler_st *data)
 {
+   (void)data;
+    cl_int ret_val;
+
     test_icd_app_log("clRetainSampler(%p)\n", sampler);
 
     ret_val=clRetainSampler(sampler);
@@ -33,6 +31,8 @@ int test_clRetainSampler(const struct clRetainSampler_st *data)
 
 int test_clGetSamplerInfo(const struct clGetSamplerInfo_st *data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clGetSamplerInfo(%p, %u, %u, %p, %p)\n",
                      sampler,
                      data->param_name,

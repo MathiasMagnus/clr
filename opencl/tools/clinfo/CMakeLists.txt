@@ -1,6 +1,12 @@
 add_executable(clinfo clinfo.cpp)
 
-target_compile_definitions(clinfo PRIVATE CL_TARGET_OPENCL_VERSION=220 HAVE_CL2_HPP)
+target_compile_definitions(clinfo PRIVATE
+  CL_USE_DEPRECATED_OPENCL_2_2_APIS
+  CL_USE_DEPRECATED_OPENCL_2_1_APIS
+  CL_USE_DEPRECATED_OPENCL_2_0_APIS
+  CL_USE_DEPRECATED_OPENCL_1_2_APIS
+  CL_TARGET_OPENCL_VERSION=220
+  HAVE_CL2_HPP)
 
 target_include_directories(clinfo PRIVATE ${OPENCL_ICD_LOADER_HEADERS_DIR})
 

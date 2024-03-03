@@ -1,7 +1,3 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include<sys/stat.h>
 #include<stdlib.h>
 #include<stdio.h>
@@ -22,7 +18,7 @@ int test_icd_initialize_app_log(void)
 		printf("Unable to open file %s\n", APP_LOG_FILE);
         return -1;
     }
-
+    
     return 0;
 }
 
@@ -46,7 +42,7 @@ int test_icd_initialize_stub_log(void)
 		printf("Unable to open file %s\n", STUB_LOG_FILE);
         return -1;
     }
-
+    
     return 0;
 
 }

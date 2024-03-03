@@ -1,13 +1,8 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #define CL_USE_DEPRECATED_OPENCL_1_0_APIS
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 
 #include <CL/cl.h>
 #include <CL/cl_gl.h>
-#include <CL/cl_gl_ext.h>
 #include "param_struct.h"
 #include <platform/icd_test_log.h>
 
@@ -16,8 +11,6 @@ extern cl_mem buffer;
 extern cl_command_queue command_queue;
 extern cl_event event;
 extern cl_context_properties context_properties[3];
-static cl_int ret_val;
-cl_mem ret_mem;
 
 struct clCreateFromGLBuffer_st clCreateFromGLBufferData[NUM_ITEMS_clCreateFromGLBuffer] = {
 	{NULL, 0x0, 0, NULL}
@@ -25,6 +18,7 @@ struct clCreateFromGLBuffer_st clCreateFromGLBufferData[NUM_ITEMS_clCreateFromGL
 
 int test_clCreateFromGLBuffer(const struct clCreateFromGLBuffer_st* data)
 {
+    cl_mem ret_mem;
 
     test_icd_app_log("clCreateFromGLBuffer(%p, %x, %u, %p)\n",
                      context,
@@ -48,6 +42,8 @@ struct clCreateFromGLTexture_st clCreateFromGLTextureData[NUM_ITEMS_clCreateFrom
 
 int test_clCreateFromGLTexture(const struct clCreateFromGLTexture_st* data)
 {
+    cl_mem ret_mem;
+
     test_icd_app_log("clCreateFromGLTexture(%p, %x, %d, %d, %u, %p)\n",
                      context,
                      data->flags,
@@ -74,6 +70,8 @@ struct clCreateFromGLTexture2D_st clCreateFromGLTexture2DData[NUM_ITEMS_clCreate
 
 int test_clCreateFromGLTexture2D(const struct clCreateFromGLTexture2D_st* data)
 {
+    cl_mem ret_mem;
+
     test_icd_app_log("clCreateFromGLTexture2D(%p, %x, %d, %d, %u, %p)\n",
                      context,
                      data->flags,
@@ -100,6 +98,8 @@ struct clCreateFromGLTexture3D_st clCreateFromGLTexture3DData[NUM_ITEMS_clCreate
 
 int test_clCreateFromGLTexture3D(const struct clCreateFromGLTexture3D_st* data)
 {
+    cl_mem ret_mem;
+
     test_icd_app_log("clCreateFromGLTexture3D(%p, %x, %d, %d, %u, %p)\n",
                      context,
                      data->flags,
@@ -126,6 +126,8 @@ struct clCreateFromGLRenderbuffer_st clCreateFromGLRenderbufferData[NUM_ITEMS_cl
 
 int test_clCreateFromGLRenderbuffer(const struct clCreateFromGLRenderbuffer_st* data)
 {
+    cl_mem ret_mem;
+
     test_icd_app_log("clCreateFromGLRenderbuffer(%p, %x, %d, %p)\n",
                      context,
                      data->flags,
@@ -148,6 +150,8 @@ struct clGetGLObjectInfo_st clGetGLObjectInfoData[NUM_ITEMS_clGetGLObjectInfo] =
 
 int test_clGetGLObjectInfo(const struct clGetGLObjectInfo_st* data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clGetGLObjectInfo(%p, %p, %p)\n",
                      buffer,
                      data->gl_object_type,
@@ -169,6 +173,8 @@ struct clGetGLTextureInfo_st clGetGLTextureInfoData[NUM_ITEMS_clGetGLTextureInfo
 
 int test_clGetGLTextureInfo(const struct clGetGLTextureInfo_st* data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clGetGLTextureInfo(%p, %u, %u, %p, %p)\n",
                      buffer,
                      data->param_name,
@@ -193,6 +199,8 @@ struct clEnqueueAcquireGLObjects_st clEnqueueAcquireGLObjectsData[NUM_ITEMS_clEn
 
 int test_clEnqueueAcquireGLObjects(const struct clEnqueueAcquireGLObjects_st* data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueAcquireGLObjects(%p, %u, %p, %u, %p, %p)\n",
                      command_queue,
                      data->num_objects,
@@ -219,6 +227,8 @@ struct clEnqueueReleaseGLObjects_st clEnqueueReleaseGLObjectsData[NUM_ITEMS_clEn
 
 int test_clEnqueueReleaseGLObjects(const struct clEnqueueReleaseGLObjects_st* data)
 {
+    cl_int ret_val;
+
     test_icd_app_log("clEnqueueReleaseGLObjects(%p, %u, %p, %u, %p, %p)\n",
                      command_queue,
                      data->num_objects,
@@ -244,7 +254,7 @@ struct clCreateEventFromGLsyncKHR_st clCreateEventFromGLsyncKHRData[NUM_ITEMS_cl
     {NULL, NULL, NULL}
 };
 
-typedef CL_API_ENTRY cl_event
+typedef cl_event
 (CL_API_CALL *PFN_clCreateEventFromGLsyncKHR)(cl_context           /* context */,
                                               cl_GLsync            /* cl_GLsync */,
                                               cl_int *             /* errcode_ret */);
@@ -258,7 +268,8 @@ int test_clCreateEventFromGLsyncKHR(const struct clCreateEventFromGLsyncKHR_st* 
                      data->sync,
                      data->errcode_ret);
 
-    pfn_clCreateEventFromGLsyncKHR = clGetExtensionFunctionAddress("clCreateEventFromGLsyncKHR");
+    pfn_clCreateEventFromGLsyncKHR = (PFN_clCreateEventFromGLsyncKHR)
+      (intptr_t)clGetExtensionFunctionAddress("clCreateEventFromGLsyncKHR");
     if (!pfn_clCreateEventFromGLsyncKHR) {
         test_icd_app_log("clGetExtensionFunctionAddress failed!\n");
         return 1;
@@ -276,7 +287,7 @@ struct clGetGLContextInfoKHR_st clGetGLContextInfoKHRData[NUM_ITEMS_clGetGLConte
     {NULL, 0, 0, NULL, NULL}
 };
 
-typedef CL_API_ENTRY cl_int
+typedef cl_int
 (CL_API_CALL *PFN_clGetGLContextInfoKHR)(const cl_context_properties * /* properties */,
                                          cl_gl_context_info            /* param_name */,
                                          size_t                        /* param_value_size */,
@@ -285,6 +296,8 @@ typedef CL_API_ENTRY cl_int
 
 int test_clGetGLContextInfoKHR(const struct clGetGLContextInfoKHR_st* data)
 {
+    cl_int ret_val;
+
     PFN_clGetGLContextInfoKHR pfn_clGetGLContextInfoKHR = NULL;
     test_icd_app_log("clGetGLContextInfoKHR(%p, %u, %u, %p, %p)\n",
                      context_properties,
@@ -293,7 +306,8 @@ int test_clGetGLContextInfoKHR(const struct clGetGLContextInfoKHR_st* data)
                      data->param_value,
                      data->param_value_size_ret);
 
-    pfn_clGetGLContextInfoKHR = clGetExtensionFunctionAddress("clGetGLContextInfoKHR");
+    pfn_clGetGLContextInfoKHR = (PFN_clGetGLContextInfoKHR)
+      (intptr_t)clGetExtensionFunctionAddress("clGetGLContextInfoKHR");
     if (!pfn_clGetGLContextInfoKHR) {
         test_icd_app_log("clGetExtensionFunctionAddress failed!\n");
         return 1;

@@ -19,16 +19,16 @@
 # THE SOFTWARE.
 
 find_package(amd_comgr REQUIRED CONFIG
-  PATHS
-    /opt/rocm/
-    ${ROCM_INSTALL_PATH}
+  #PATHS
+  #  /opt/rocm/
+  #  ${ROCM_INSTALL_PATH}
   PATH_SUFFIXES
     cmake/amd_comgr
     lib/cmake/amd_comgr)
 
 target_compile_definitions(rocclr PUBLIC WITH_LIGHTNING_COMPILER USE_COMGR_LIBRARY)
 if(BUILD_SHARED_LIBS)
-  target_compile_definitions(rocclr PUBLIC COMGR_DYN_DLL)
+  #target_compile_definitions(rocclr PUBLIC COMGR_DYN_DLL)
 endif()
 target_link_libraries(rocclr PUBLIC amd_comgr)
 

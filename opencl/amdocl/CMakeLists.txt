@@ -66,6 +66,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 else()
   set_target_properties(amdocl PROPERTIES OUTPUT_NAME "amdocl32")
 endif()
+set_target_properties(amdocl PROPERTIES OUTPUT_NAME "amdocl128")
 
 target_sources(amdocl PRIVATE
   cl_command.cpp
@@ -114,6 +115,8 @@ if(WIN32)
 endif()
 
 target_link_libraries(amdocl PUBLIC rocclr)
+
+target_compile_definitions(amdocl PUBLIC CL_TARGET_OPENCL_VERSION=220)
 
 INSTALL(TARGETS amdocl
   COMPONENT MAIN

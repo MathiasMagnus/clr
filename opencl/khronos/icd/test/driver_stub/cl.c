@@ -1,7 +1,3 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -92,7 +88,7 @@ clGetPlatformIDs(cl_uint           num_entries ,
                       platforms,
                       num_platforms);
     return_value = clIcdGetPlatformIDsKHR(num_entries, platforms, num_platforms);
-    test_icd_stub_log("Value returned: %d\n", return_value);
+    test_icd_stub_log("Value returned: %d\n", return_value); 
     return return_value;
 }
 
@@ -106,11 +102,11 @@ clGetPlatformInfo(cl_platform_id    platform,
     cl_int ret = CL_SUCCESS;
     const char *returnString = NULL;
     size_t returnStringLength = 0;
-    /*test_icd_stub_log("clGetPlatformInfo(%p, %u, %u, %p, %p)\n",
-                      platform,
-                      param_name,
-                      param_value_size,
-                      param_value,
+    /*test_icd_stub_log("clGetPlatformInfo(%p, %u, %u, %p, %p)\n", 
+                      platform, 
+                      param_name, 
+                      param_value_size, 
+                      param_value, 
                       param_value_size_ret);*/
 
     // validate the arguments
@@ -175,7 +171,7 @@ clGetDeviceIDs(cl_platform_id   platform,
 {
     cl_int ret = CL_SUCCESS;
 
-    if ((num_entries > 1 || num_entries < 0) && devices != NULL) {
+    if ((num_entries > 1) && devices != NULL) {
         ret = CL_INVALID_VALUE;
         goto done;
     }
@@ -310,13 +306,13 @@ clCreateContextFromType(const cl_context_properties * properties,
                       errcode_ret);
     pfn_notify(NULL, NULL, 0, NULL);
 
-    test_icd_stub_log ("createcontext_callback(%p, %p, %u, %p)\n",
-                       NULL,
-                       NULL,
-                       0,
+    test_icd_stub_log ("createcontext_callback(%p, %p, %u, %p)\n", 
+                       NULL, 
+                       NULL, 
+                       0, 
                        NULL);
-
-    test_icd_stub_log("Value returned: %p\n",
+    
+    test_icd_stub_log("Value returned: %p\n", 
 		              obj);
     return obj;
 }
@@ -359,6 +355,26 @@ clGetContextInfo(cl_context         context,
     return return_value;
 }
 
+CL_API_ENTRY cl_int CL_API_CALL
+clSetContextDestructorCallback(cl_context         context,
+                               void (CL_CALLBACK* pfn_notify)(cl_context context,
+                                                              void* user_data),
+                               void*              user_data) CL_API_SUFFIX__VERSION_3_0
+{
+    cl_int return_value = CL_OUT_OF_RESOURCES;
+    test_icd_stub_log("clSetContextDestructorCallback(%p, %p, %p)\n",
+                      context,
+                      pfn_notify,
+                      user_data);
+    pfn_notify(context, user_data);
+    test_icd_stub_log("setcontextdestructor_callback(%p, %p)\n",
+               context,
+               user_data);
+
+    test_icd_stub_log("Value returned: %d\n", return_value);
+    return return_value;
+}
+
 /* Command Queue APIs */
 CL_API_ENTRY cl_command_queue CL_API_CALL
 clCreateCommandQueue(cl_context                     context,
@@ -382,7 +398,7 @@ CL_API_ENTRY cl_int CL_API_CALL
 clSetCommandQueueProperty(cl_command_queue               command_queue ,
                             cl_command_queue_properties    properties ,
                             cl_bool                        enable ,
-                            cl_command_queue_properties *  old_properties) CL_EXT_SUFFIX__VERSION_1_0_DEPRECATED
+                            cl_command_queue_properties *  old_properties) CL_API_SUFFIX__VERSION_1_0_DEPRECATED
 {
     cl_int return_value = CL_OUT_OF_RESOURCES;
     test_icd_stub_log("clSetCommandQueueProperty(%p, %p, %u, %p)\n",
@@ -555,6 +571,52 @@ clCreateImage3D(cl_context              context,
     return obj;
 }
 
+CL_API_ENTRY cl_mem CL_API_CALL
+clCreateBufferWithProperties(cl_context                context ,
+                             const cl_mem_properties * properties,
+                             cl_mem_flags              flags ,
+                             size_t                    size ,
+                             void *                    host_ptr ,
+                             cl_int *                  errcode_ret) CL_API_SUFFIX__VERSION_3_0
+{
+    cl_mem obj = (cl_mem) malloc(sizeof(struct _cl_mem));
+    obj->dispatch = dispatchTable;
+    test_icd_stub_log("clCreateBufferWithProperties(%p, %p, %x, %u, %p, %p)\n",
+                      context,
+                      properties,
+                      flags,
+                      size,
+                      host_ptr,
+                      errcode_ret);
+
+    test_icd_stub_log("Value returned: %p\n", obj);
+    return obj;
+}
+
+CL_API_ENTRY cl_mem CL_API_CALL
+clCreateImageWithProperties(cl_context                context,
+                            const cl_mem_properties * properties,
+                            cl_mem_flags              flags,
+                            const cl_image_format *   image_format,
+                            const cl_image_desc *     image_desc,
+                            void *                    host_ptr,
+                            cl_int *                  errcode_ret) CL_API_SUFFIX__VERSION_3_0
+{
+    cl_mem obj = (cl_mem) malloc(sizeof(struct _cl_mem));
+    obj->dispatch = dispatchTable;
+    test_icd_stub_log("clCreateImageWithProperties(%p, %p, %x, %p, %p, %p, %p)\n",
+                      context,
+                      properties,
+                      flags,
+                      image_format,
+                      image_desc,
+                      host_ptr,
+                      errcode_ret);
+
+    test_icd_stub_log("Value returned: %p\n", obj);
+    return obj;
+}
+
 CL_API_ENTRY cl_int CL_API_CALL
 clRetainMemObject(cl_mem memobj) CL_API_SUFFIX__VERSION_1_0
 {
@@ -643,10 +705,10 @@ clSetMemObjectDestructorCallback(cl_mem  memobj ,
                       memobj,
                       pfn_notify,
                       user_data);
-    pfn_notify(memobj, NULL);
+    pfn_notify(memobj, user_data);
     test_icd_stub_log("setmemobjectdestructor_callback(%p, %p)\n",
                memobj,
-               NULL);
+               user_data);
 
     test_icd_stub_log("Value returned: %d\n", return_value);
     return return_value;
@@ -840,6 +902,7 @@ clCompileProgram(cl_program            program ,
                  void (CL_CALLBACK *   pfn_notify)(cl_program  program , void *  user_data),
                  void *                user_data) CL_API_SUFFIX__VERSION_1_2
 {
+    (void)input_headers;
     cl_int return_value = CL_OUT_OF_RESOURCES;
     test_icd_stub_log("clCompileProgram(%p, %u, %p, %p, %u, %p, %p, %p)\n",
                       program,

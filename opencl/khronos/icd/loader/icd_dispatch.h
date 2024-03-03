@@ -35,6 +35,14 @@
 #define CL_USE_DEPRECATED_OPENCL_2_0_APIS
 #endif
 
+#ifndef CL_USE_DEPRECATED_OPENCL_2_1_APIS
+#define CL_USE_DEPRECATED_OPENCL_2_1_APIS
+#endif
+
+#ifndef CL_USE_DEPRECATED_OPENCL_2_2_APIS
+#define CL_USE_DEPRECATED_OPENCL_2_2_APIS
+#endif
+
 // cl.h
 #include <CL/cl.h>
 
@@ -48,7 +56,6 @@
 #include <CL/cl_dx9_media_sharing.h>
 #endif
 #include <CL/cl_gl.h>
-#include <CL/cl_gl_ext.h>
 #include <CL/cl_ext.h>
 #include <CL/cl_egl.h>
 #include <CL/cl_icd.h>

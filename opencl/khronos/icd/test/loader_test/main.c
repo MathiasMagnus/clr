@@ -1,7 +1,3 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include<stdio.h>
 #include<CL/cl.h>
 #include<platform/icd_test_log.h>
@@ -22,6 +18,8 @@ extern int test_icd_match();
 
 int main(int argc, char **argv)
 {
+    (void)argc;
+    (void)argv;
     test_icd_initialize_app_log();
     test_icd_initialize_stub_log();
 
@@ -38,7 +36,7 @@ int main(int argc, char **argv)
 
     test_icd_close_app_log();
     test_icd_close_stub_log();
-
+    
     if (test_icd_match()) {
         printf("ICD Loader Test FAILED\n");
         return 1;

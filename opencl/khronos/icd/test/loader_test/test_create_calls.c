@@ -1,7 +1,3 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include <string.h>
 #include <stdlib.h>
 
@@ -29,8 +25,8 @@ cl_kernel kernel;
 cl_event event;
 cl_device_id devices;
 cl_context_properties context_properties[3] = {
-    (cl_context_properties)CL_CONTEXT_PLATFORM,
-    0,
+    (cl_context_properties)CL_CONTEXT_PLATFORM, 
+    0, 
     0,
 };
 
@@ -45,7 +41,7 @@ const struct clCreateSampler_st clCreateSamplerData[NUM_ITEMS_clCreateSampler] =
 };
 
 const struct clCreateCommandQueue_st clCreateCommandQueueData[NUM_ITEMS_clCreateCommandQueue] =
-{
+{ 
     {NULL, NULL, 0, NULL}
 };
 
@@ -64,6 +60,11 @@ const struct clCreateBuffer_st clCreateBufferData[NUM_ITEMS_clCreateBuffer] =
     {NULL, 0, 0, NULL, NULL}
 };
 
+const struct clCreateBufferWithProperties_st clCreateBufferWithPropertiesData[NUM_ITEMS_clCreateBufferWithProperties] =
+{
+    {NULL, NULL, 0, 0, NULL, NULL}
+};
+
 const struct clCreateSubBuffer_st clCreateSubBufferData[NUM_ITEMS_clCreateSubBuffer] =
 {
     {NULL, 0, 0, NULL, NULL}
@@ -72,6 +73,11 @@ const struct clCreateSubBuffer_st clCreateSubBufferData[NUM_ITEMS_clCreateSubBuf
 const struct clCreateImage_st clCreateImageData[NUM_ITEMS_clCreateImage] =
 {
     { NULL, 0x0, NULL, NULL, NULL, NULL}
+};
+
+const struct clCreateImageWithProperties_st clCreateImageWithPropertiesData[NUM_ITEMS_clCreateImageWithProperties] =
+{
+    { NULL, NULL, 0x0, NULL, NULL, NULL, NULL}
 };
 
 const struct clCreateImage2D_st clCreateImage2DData[NUM_ITEMS_clCreateImage2D] =
@@ -142,45 +148,47 @@ int test_clGetPlatformIDs(const struct clGetPlatformIDs_st* data)
 {
     cl_int ret_val;
     size_t param_val_ret_size;
-    #define PLATFORM_NAME_SIZE 40
+    #define PLATFORM_NAME_SIZE 80
     char platform_name[PLATFORM_NAME_SIZE];
-    cl_uint i;
+    cl_uint i;    
 
 #if ENABLE_MISMATCHING_PRINTS
     test_icd_app_log("clGetPlatformIDs(%u, %p, %p)\n",
                      data->num_entries,
-                     &platforms,
+                     &platforms, 
                      &num_platforms);
+#else
+    (void)data;
 #endif
 
     ret_val = clGetPlatformIDs(0,
                             NULL,
                             &num_platforms);
-
+ 
     if (ret_val != CL_SUCCESS){
         return -1;
     }
-
+    
     all_platforms = (cl_platform_id *) malloc (num_platforms * sizeof(cl_platform_id));
 
     ret_val = clGetPlatformIDs(num_platforms,
-                            all_platforms,
-                            NULL);
-
+                            all_platforms, 
+                            NULL); 
+  
     if (ret_val != CL_SUCCESS){
         return -1;
     }
-
+   
     for (i = 0; i < num_platforms; i++) {
         ret_val = clGetPlatformInfo(all_platforms[i],
                 CL_PLATFORM_NAME,
                 PLATFORM_NAME_SIZE,
                 (void*)platform_name,
-                &param_val_ret_size );
+                &param_val_ret_size );  
 
         if (ret_val == CL_SUCCESS ){
             if(!strcmp(platform_name, "ICD_LOADER_TEST_OPENCL_STUB")) {
-                platform = all_platforms[i];
+                platform = all_platforms[i];                
             }
         }
     }
@@ -199,15 +207,15 @@ int test_clGetDeviceIDs(const struct clGetDeviceIDs_st* data)
 
     test_icd_app_log("clGetDeviceIDs(%p, %x, %u, %p, %p)\n",
                      platform,
-                     data->device_type,
+                     data->device_type, 
                      data->num_entries,
-                     &devices,
-                     data->num_devices);
-
+                     &devices, 
+                     data->num_devices); 
+ 
     ret_val = clGetDeviceIDs(platform,
-                           data->device_type,
+                           data->device_type, 
                            data->num_entries,
-                           &devices,
+                           &devices, 
                            data->num_devices);
 
     test_icd_app_log("Value returned: %d\n", ret_val);
@@ -219,14 +227,14 @@ int test_clGetDeviceIDs(const struct clGetDeviceIDs_st* data)
 int test_clCreateContext(const struct clCreateContext_st* data)
 {
     test_icd_app_log("clCreateContext(%p, %u, %p, %p, %p, %p)\n",
-                     data->properties,
+                     data->properties, 
                      data->num_devices,
-                     &devices,
+                     &devices, 
                      &createcontext_callback,
                      data->user_data,
                      data->errcode_ret);
 
-    context = clCreateContext(data->properties,
+    context = clCreateContext(data->properties, 
                             data->num_devices,
                             &devices,
                             &createcontext_callback,
@@ -242,15 +250,15 @@ int test_clCreateContext(const struct clCreateContext_st* data)
 int test_clCreateContextFromType(const struct clCreateContextFromType_st* data)
 {
     test_icd_app_log("clCreateContextFromType(%p, %x, %p, %p, %p)\n",
-                     context_properties,
-                     data->device_type,
+                     context_properties, 
+                     data->device_type, 
                      data->pfn_notify,
                      data->user_data,
                      data->errcode_ret);
 
-
-    context = clCreateContextFromType(context_properties,
-                                    data->device_type,
+   
+    context = clCreateContextFromType(context_properties, 
+                                    data->device_type, 
                                     data->pfn_notify,
                                     data->user_data,
                                     data->errcode_ret);
@@ -285,11 +293,36 @@ int test_clCreateBuffer(const struct clCreateBuffer_st *data)
     test_icd_app_log("clCreateBuffer(%p, %x, %u, %p, %p)\n",
                      context,
                      data->flags,
-                     data->size,
+                     data->size, 
                      data->host_ptr,
                      data->errcode_ret);
 
     buffer = clCreateBuffer(context,
+                       data->flags,
+                       data->size, 
+                       data->host_ptr,
+                       data->errcode_ret);
+    
+    clReleaseMemObjectData->memobj = buffer;
+
+    test_icd_app_log("Value returned: %p\n", buffer);
+
+    return 0;
+
+}
+
+int test_clCreateBufferWithProperties(const struct clCreateBufferWithProperties_st *data)
+{
+    test_icd_app_log("clCreateBufferWithProperties(%p, %p, %x, %u, %p, %p)\n",
+                     context,
+                     data->properties,
+                     data->flags,
+                     data->size,
+                     data->host_ptr,
+                     data->errcode_ret);
+
+    buffer = clCreateBufferWithProperties(context,
+                       data->properties,
                        data->flags,
                        data->size,
                        data->host_ptr,
@@ -331,12 +364,38 @@ int test_clCreateImage(const struct clCreateImage_st *data)
     test_icd_app_log("clCreateImage(%p, %x, %p, %p, %p, %p)\n",
                      context,
                      data->flags,
-                     data->image_format,
+                     data->image_format, 
                      data->image_desc,
                      data->host_ptr,
                      data->errcode_ret);
 
     image = clCreateImage(context,
+                        data->flags,
+                        data->image_format, 
+                        data->image_desc,
+                        data->host_ptr,
+                        data->errcode_ret);
+    
+    clReleaseMemObjectDataImage[0].memobj = image;
+    test_icd_app_log("Value returned: %p\n", image);
+
+    return 0;
+
+}
+
+int test_clCreateImageWithProperties(const struct clCreateImageWithProperties_st *data)
+{
+    test_icd_app_log("clCreateImageWithProperties(%p, %p, %x, %p, %p, %p, %p)\n",
+                     context,
+                     data->properties,
+                     data->flags,
+                     data->image_format,
+                     data->image_desc,
+                     data->host_ptr,
+                     data->errcode_ret);
+
+    image = clCreateImageWithProperties(context,
+                        data->properties,
                         data->flags,
                         data->image_format,
                         data->image_desc,
@@ -355,7 +414,7 @@ int test_clCreateImage2D(const struct clCreateImage2D_st *data)
     test_icd_app_log("clCreateImage2D(%p, %x, %p, %u, %u, %u, %p, %p)\n",
                      context,
                      data->flags,
-                     data->image_format,
+                     data->image_format, 
                      data->image_width,
                      data->image_height,
                      data->image_row_pitch,
@@ -364,16 +423,16 @@ int test_clCreateImage2D(const struct clCreateImage2D_st *data)
 
     image = clCreateImage2D(context,
                     data->flags,
-                    data->image_format,
+                    data->image_format, 
                     data->image_width,
                     data->image_height,
                     data->image_row_pitch,
                     data->host_ptr,
                     data->errcode_ret);
-
+    
     clReleaseMemObjectDataImage[0].memobj = image;
     test_icd_app_log("Value returned: %p\n", image);
-
+ 
     return 0;
 
 }
@@ -383,7 +442,7 @@ int test_clCreateImage3D(const struct clCreateImage3D_st *data)
     test_icd_app_log("clCreateImage3D(%p, %x, %p, %u, %u, %u, %u, %u, %p, %p)\n",
                      context,
                      data->flags,
-                     data->image_format,
+                     data->image_format, 
                      data->image_width,
                      data->image_height,
                      data->image_depth,
@@ -394,7 +453,7 @@ int test_clCreateImage3D(const struct clCreateImage3D_st *data)
 
     image = clCreateImage3D(context,
                     data->flags,
-                    data->image_format,
+                    data->image_format, 
                     data->image_width,
                     data->image_height,
                     data->image_depth,
@@ -402,7 +461,7 @@ int test_clCreateImage3D(const struct clCreateImage3D_st *data)
                     data->image_slice_pitch,
                     data->host_ptr,
                     data->errcode_ret);
-
+    
     clReleaseMemObjectDataImage[0].memobj = image;
     test_icd_app_log("Value returned: %p\n", image);
 
@@ -462,7 +521,7 @@ int test_clCreateProgramWithBinary(const struct clCreateProgramWithBinary_st *da
                      data->binaries,
                      data->binary_status,
                      data->errcode_ret);
-
+        
     program = clCreateProgramWithBinary(context,
                                         data->num_devices,
                                         &devices,
@@ -557,6 +616,7 @@ const struct clReleaseSampler_st clReleaseSamplerData[NUM_ITEMS_clReleaseSampler
 
 int test_clReleaseSampler(const struct clReleaseSampler_st *data)
 {
+    (void)data;
     int ret_val = CL_OUT_OF_RESOURCES;
 
     test_icd_app_log("clReleaseSampler(%p)\n", sampler);
@@ -564,7 +624,7 @@ int test_clReleaseSampler(const struct clReleaseSampler_st *data)
     ret_val = clReleaseSampler(sampler);
 
     test_icd_app_log("Value returned: %d\n", ret_val);
-
+         
     return 0;
 
 }
@@ -589,6 +649,7 @@ const struct clReleaseEvent_st clReleaseEventData[NUM_ITEMS_clReleaseEvent] =
 
 int test_clReleaseEvent(const struct clReleaseEvent_st* data)
 {
+    (void)data;
     int ret_val = CL_OUT_OF_RESOURCES;
 
     test_icd_app_log("clReleaseEvent(%p)\n", event);
@@ -608,7 +669,8 @@ const struct clReleaseKernel_st clReleaseKernelData[NUM_ITEMS_clReleaseKernel] =
 
 int test_clReleaseKernel(const struct clReleaseKernel_st* data)
 {
-    int ret_val = CL_OUT_OF_RESOURCES;
+    (void)data;
+    int ret_val = CL_OUT_OF_RESOURCES;   
 
     test_icd_app_log("clReleaseKernel(%p)\n", kernel);
 
@@ -627,6 +689,7 @@ const struct clReleaseProgram_st clReleaseProgramData[NUM_ITEMS_clReleaseProgram
 
 int test_clReleaseProgram(const struct clReleaseProgram_st *data)
 {
+    (void)data;
     int ret_val = CL_OUT_OF_RESOURCES;
 
     test_icd_app_log("clReleaseProgram(%p)\n", program);
@@ -646,6 +709,7 @@ const struct clReleaseCommandQueue_st clReleaseCommandQueueData[NUM_ITEMS_clRele
 
 int test_clReleaseCommandQueue(const struct clReleaseCommandQueue_st *data)
 {
+    (void)data;
     int ret_val = CL_OUT_OF_RESOURCES;
 
     test_icd_app_log("clReleaseCommandQueue(%p)\n", command_queue);
@@ -665,10 +729,11 @@ const struct clReleaseContext_st clReleaseContextData[NUM_ITEMS_clReleaseContext
 
 int test_clReleaseContext(const struct clReleaseContext_st* data)
 {
-    int ret_val = CL_OUT_OF_RESOURCES;
+    (void)data;
+    int ret_val = CL_OUT_OF_RESOURCES; 
 
     test_icd_app_log("clReleaseContext(%p)\n", context);
-
+             
     ret_val = clReleaseContext(context);
 
     test_icd_app_log("Value returned: %d\n", ret_val);
@@ -684,11 +749,12 @@ const struct clReleaseDevice_st clReleaseDeviceData[NUM_ITEMS_clReleaseDevice] =
 
 int test_clReleaseDevice(const struct clReleaseDevice_st* data)
 {
+    (void)data;
     int ret_val = CL_OUT_OF_RESOURCES;
 
-    test_icd_app_log("clReleaseDevice(%p)\n", devices);
-
-    ret_val = clReleaseDevice(devices);
+    test_icd_app_log("clReleaseDevice(%p)\n", devices); 
+ 
+    ret_val = clReleaseDevice(devices); 
 
     test_icd_app_log("Value returned: %d\n", ret_val);
 
@@ -704,7 +770,7 @@ int test_create_calls()
 
     test_clGetDeviceIDs(clGetDeviceIDsData);
 
-    test_clCreateContext(clCreateContextData);
+    test_clCreateContext(clCreateContextData);  
 
     test_clReleaseContext(clReleaseContextData);
 
@@ -714,9 +780,13 @@ int test_create_calls()
 
     test_clCreateBuffer(clCreateBufferData);
 
+    test_clCreateBufferWithProperties(clCreateBufferWithPropertiesData);
+
     test_clCreateSubBuffer(clCreateSubBufferData);
 
     test_clCreateImage(clCreateImageData);
+
+    test_clCreateImageWithProperties(clCreateImageWithPropertiesData);
 
     test_clReleaseMemObject(clReleaseMemObjectDataImage);
 

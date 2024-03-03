@@ -1,9 +1,4 @@
-/* Modifications Copyright(C) 2022 Advanced Micro Devices, Inc.
- * All rights reserved.
- */
-
 #include <CL/cl_gl.h>
-#include <CL/cl_gl_ext.h>
 #include <platform/icd_test_log.h>
 
 // Need to rename all CL API functions to prevent ICD loader functions calling
@@ -17,14 +12,14 @@ clCreateFromGLBuffer(cl_context      context ,
                      cl_mem_flags    flags ,
                      cl_GLuint       bufret_mem ,
                      int *           errcode_ret ) CL_API_SUFFIX__VERSION_1_0
-{
-     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);
+{    
+     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);  
      test_icd_stub_log("clCreateFromGLBuffer(%p, %x, %u, %p)\n",
                        context,
                        flags,
-                       bufret_mem,
+                       bufret_mem, 
                        errcode_ret);
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_mem);
      return ret_mem;
 }
@@ -37,7 +32,7 @@ clCreateFromGLTexture(cl_context       context ,
                       cl_GLuint        texture ,
                       cl_int *         errcode_ret ) CL_API_SUFFIX__VERSION_1_2
 {
-     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);
+     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);  
      test_icd_stub_log("clCreateFromGLTexture(%p, %x, %d, %d, %u, %p)\n",
                        context ,
                        flags ,
@@ -45,7 +40,7 @@ clCreateFromGLTexture(cl_context       context ,
                        miplevel ,
                        texture ,
                        errcode_ret );
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_mem);
      return ret_mem;
 }
@@ -58,7 +53,7 @@ clCreateFromGLTexture2D(cl_context       context,
                         cl_GLuint        texture,
                         cl_int *         errcode_ret ) CL_API_SUFFIX__VERSION_1_0
 {
-     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);
+     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);  
      test_icd_stub_log("clCreateFromGLTexture2D(%p, %x, %d, %d, %u, %p)\n",
                         context,
                         flags,
@@ -66,7 +61,7 @@ clCreateFromGLTexture2D(cl_context       context,
                         miplevel,
                         texture,
                         errcode_ret );
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_mem);
      return ret_mem;
 }
@@ -80,7 +75,7 @@ clCreateFromGLTexture3D(cl_context       context,
                         cl_int *         errcode_ret ) CL_API_SUFFIX__VERSION_1_0
 
 {
-     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);
+     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);  
      test_icd_stub_log("clCreateFromGLTexture3D(%p, %x, %d, %d, %u, %p)\n",
                         context,
                         flags,
@@ -88,7 +83,7 @@ clCreateFromGLTexture3D(cl_context       context,
                         miplevel,
                         texture,
                         errcode_ret );
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_mem);
      return ret_mem;
 }
@@ -99,13 +94,13 @@ clCreateFromGLRenderbuffer(cl_context    context,
                            cl_GLuint     renderbuffer,
                            cl_int *      errcode_ret ) CL_API_SUFFIX__VERSION_1_0
 {
-     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);
+     cl_mem ret_mem = (cl_mem)(SIZE_T_MAX);  
      test_icd_stub_log("clCreateFromGLRenderbuffer(%p, %x, %d, %p)\n",
                        context,
                        flags,
                        renderbuffer,
                        errcode_ret);
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_mem);
      return ret_mem;
 }
@@ -114,13 +109,13 @@ CL_API_ENTRY cl_int CL_API_CALL
 clGetGLObjectInfo(cl_mem                 memobj,
                   cl_gl_object_type *    gl_object_type,
                   cl_GLuint *            gl_object_name ) CL_API_SUFFIX__VERSION_1_0
-{
+{  
      cl_int ret_val = -5;
      test_icd_stub_log("clGetGLObjectInfo(%p, %p, %p)\n",
                        memobj,
                        gl_object_type,
                        gl_object_name);
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_val);
      return ret_val;
 }
@@ -139,7 +134,7 @@ clGetGLTextureInfo(cl_mem                memobj,
                        param_value_size,
                        param_value,
                        param_value_size_ret );
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_val);
      return ret_val;
 }
@@ -161,7 +156,7 @@ clEnqueueAcquireGLObjects(cl_command_queue       command_queue,
                       event_wait_list,
                       event);
 
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_val);
      return ret_val;
 }
@@ -182,8 +177,8 @@ clEnqueueReleaseGLObjects(cl_command_queue       command_queue,
                         mem_objects,
                         num_events_in_wait_list,
                         event_wait_list,
-                        event);
-     test_icd_stub_log("Value returned: %p\n",
+                        event); 
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_val);
      return ret_val;
 }
@@ -203,7 +198,7 @@ clGetGLContextInfoKHR(const cl_context_properties *  properties,
                       param_value,
                       param_value_size_ret);
 
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                       ret_val);
      return ret_val;
 }
@@ -211,7 +206,7 @@ clGetGLContextInfoKHR(const cl_context_properties *  properties,
 CL_API_ENTRY cl_event CL_API_CALL
 clCreateEventFromGLsyncKHR(cl_context            context ,
                            cl_GLsync             cl_GLsync ,
-                           cl_int *              errcode_ret ) CL_EXT_SUFFIX__VERSION_1_1
+                           cl_int *              errcode_ret ) CL_API_SUFFIX__VERSION_1_1
 
 {
      cl_event ret_event = (cl_event)(SIZE_T_MAX);
@@ -219,7 +214,7 @@ clCreateEventFromGLsyncKHR(cl_context            context ,
                         context,
                         cl_GLsync,
                         errcode_ret);
-     test_icd_stub_log("Value returned: %p\n",
+     test_icd_stub_log("Value returned: %p\n", 
                        ret_event);
      return ret_event;
 }
